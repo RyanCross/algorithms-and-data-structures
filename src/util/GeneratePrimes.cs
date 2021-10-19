@@ -3,7 +3,7 @@
     class GeneratePrimes
     {
         /**
-         * Big(O) Time Complexity - n * 1/2n, so n^2
+         * Big(O) Time Complexity - n * 1/2n. So n^2.
          * 
          */
         public static int[] generate(int max)

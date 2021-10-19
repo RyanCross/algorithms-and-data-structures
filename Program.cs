@@ -49,28 +49,24 @@ namespace AlgorithmsAndDataStructures
 
         static void TestHashTableWithFinalFantasyAPI()
         {
+            int initTableSize = 150;
+
             string baseUrl = "https://xivapi.com";
-            int dataSize = 250;
-
-            int[] Primes = GeneratePrimes.generate(dataSize);
-
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri(baseUrl);
 
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
             //https://xivapi.com/search?filters=ActionCategory.Name_en=Weaponskill&limit=100 - Get all skills that are weaponskills
-            Rootobject weaponSkillSearch = client.GetFromJsonAsync<Rootobject>("search?filters=ActionCategory.Name_en=Weaponskill&limit" + dataSize).Result; //Result blocks the calling thread until task completion, making this a synchronous operation
+            Rootobject weaponSkillSearch = client.GetFromJsonAsync<Rootobject>("search?filters=ActionCategory.Name_en=Weaponskill&limit" + 100).Result; //Result blocks the calling thread until task completion, making this a synchronous operation
 
-            StringHashTable skills = new StringHashTable(dataSize);
-
+            StringHashTable skills = new StringHashTable(initTableSize);
             for (int i = 0; i < weaponSkillSearch.Results.Length; i++)
             {
                 skills.Insert(new StringKeyValuePair(weaponSkillSearch.Results[i].ID.ToString(), weaponSkillSearch.Results[i].Name));
             }
 
-            //TODO implement delete, contains key, maybe try open addressing
+            //TODO check comments around testing HashTable contains/deletes method around hashcode and equals, maybe implement some tests via a testing framework?
 
             client.Dispose();
         }

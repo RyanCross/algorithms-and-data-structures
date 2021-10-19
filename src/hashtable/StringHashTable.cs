@@ -4,7 +4,7 @@ using System.Text;
 
 /**
   * Hash Table Overview:
-  * What: A Collection of key value pairs, stored internally as an array.
+  * What: An unordered collection of unique key value pairs, stored internally as an array.
   * The indexing of the elements to be stored are determined by a hash function upon insertion
   * 
   * Provide O(1) insert, delete and search operations
@@ -39,7 +39,11 @@ namespace AlgorithmsAndDataStructures.src.hashtable
         
         public void Insert(StringKeyValuePair kv)
         {
-            ulong idxOfKey = Hash(kv.GetKey()) % (ulong)Size;
+            //enforce non-null, unique kvp
+            if (ContainsKey(kv.GetKey()))
+                throw new ArgumentException("Key is null or already exists in Hashtable. A key must be unique.");
+
+            ulong idxOfKey = GetKeyIndex(kv.GetKey());
 
             //chaining: append element to front of list when a collision occurs
             if (hashTableArray[idxOfKey] != null)
@@ -54,18 +58,63 @@ namespace AlgorithmsAndDataStructures.src.hashtable
             }
         }
 
-        StringKeyValuePair Search()
+        /**
+         * Returns true if key was successfully found and removed, false otherwise.
+         **/
+        bool Delete(string key)
         {
-            return new StringKeyValuePair("Implement", "Me");
-        }
+            if (!ContainsKey(key))
+                return false;
+            else
+            {
+                ulong keyIdx = GetKeyIndex(key);
+                foreach (StringKeyValuePair kvp in hashTableArray[keyIdx])
+                {
+                    if (kvp.GetKey() == key)
+                    {
+                        hashTableArray[keyIdx].Remove(new StringKeyValuePair(kvp.GetKey(), kvp.GetValue()));  //TODO Does this work, test return
+                        return true;
+                    }
+                }
+            }
 
-        void Delete()
-        {
-            //TODO
+            return false;
         }
 
         bool ContainsKey(string key)
         {
+            if(key == null)
+                throw new ArgumentNullException("key", "Provided key cannot be null.");
+
+            ulong keyIdx = GetKeyIndex(key);
+
+            if (hashTableArray[keyIdx] != null)
+            {
+                foreach(StringKeyValuePair kvp in hashTableArray[keyIdx])
+                {
+                    if (kvp.GetKey() == key)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Returns true if the Hashtable contains the specified Key-Value pair, false otherwise.
+         *
+         **/
+        bool Contains(StringKeyValuePair kvp)
+        {
+            if (object.ReferenceEquals(null, kvp))
+                throw new ArgumentNullException();
+
+            ulong keyIdx = GetKeyIndex(kvp.GetKey());
+            if (hashTableArray[keyIdx].Count > 0 && hashTableArray[keyIdx].Find(kvp) != null)
+            {
+                return true;//TODO test if find will work with two value equivalent objs, with or without the hashcode/equals overrides in kvp
+            }
+
             return false;
         }
 
@@ -84,6 +133,16 @@ namespace AlgorithmsAndDataStructures.src.hashtable
             }
 
             return hash;
+        }
+
+        /**
+         * Returns the idx of the key after it has been hashed.
+         */
+        private ulong GetKeyIndex(string key)
+        {
+            if (key == null)
+                throw new ArgumentNullException();
+            else return Hash(key) % (ulong)Size;
         }
     }
 }
