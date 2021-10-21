@@ -16,8 +16,6 @@ using System.Text;
   * Size of hash table array should be a prime number. Heuristic for resizing: somewhere between 55%-70% capacity filled
   */
 
-// Useful side note: you can always use mod(n) where n is length of array to get an index within array lengthless than array size
-
 namespace AlgorithmsAndDataStructures.src.hashtable
 {
     /**
@@ -37,6 +35,10 @@ namespace AlgorithmsAndDataStructures.src.hashtable
             hashTableArray = new LinkedList<StringKeyValuePair>[Size];
         }
         
+        /**
+         * Inserts key value pair into hash table's underlying array, the key must not already exist in the hashtable. 
+         * Collisions are handled via chaining.
+         */
         public void Insert(StringKeyValuePair kv)
         {
             //enforce non-null, unique kvp
@@ -60,27 +62,32 @@ namespace AlgorithmsAndDataStructures.src.hashtable
 
         /**
          * Returns true if key was successfully found and removed, false otherwise.
-         **/
-        bool Delete(string key)
+         */
+        public bool Delete(string key)
         {
             if (!ContainsKey(key))
                 return false;
-            else
+
+            ulong keyIdx = GetKeyIndex(key);
+            foreach (StringKeyValuePair kvp in hashTableArray[keyIdx])
             {
-                ulong keyIdx = GetKeyIndex(key);
-                foreach (StringKeyValuePair kvp in hashTableArray[keyIdx])
+                if (kvp.GetKey() == key)
                 {
-                    if (kvp.GetKey() == key)
-                    {
-                        hashTableArray[keyIdx].Remove(new StringKeyValuePair(kvp.GetKey(), kvp.GetValue()));  //TODO Does this work, test return
-                        return true;
-                    }
+                    hashTableArray[keyIdx].Remove(new StringKeyValuePair(kvp.GetKey(), kvp.GetValue()));  
+                    return true;
                 }
             }
+
+            if (hashTableArray[keyIdx].Count == 0)
+                hashTableArray[keyIdx] = null; // set back to null, so that insert logic does not count new insertions here as collisions, technically if we added a check around numCollisions to check for empty list when list not null then this might not be needed
+                
 
             return false;
         }
 
+        /**
+         * Returns true if key was found in Hashtable, false otherwise.
+         */
         bool ContainsKey(string key)
         {
             if(key == null)

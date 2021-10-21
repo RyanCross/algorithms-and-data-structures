@@ -66,9 +66,17 @@ namespace AlgorithmsAndDataStructures
                 skills.Insert(new StringKeyValuePair(weaponSkillSearch.Results[i].ID.ToString(), weaponSkillSearch.Results[i].Name));
             }
 
+            TestHashTableDelete(skills, "51"); // Steel Cyclone, Index 7[1]
+            TestHashTableDelete(skills, "347"); //Sticky Tongue, Index 7
+
             //TODO check comments around testing HashTable contains/deletes method around hashcode and equals, maybe implement some tests via a testing framework?
 
             client.Dispose();
+        }
+
+        static void TestHashTableDelete(StringHashTable ht, string keyToRemove)
+        {
+            ht.Delete(keyToRemove);
         }
     }
 }
