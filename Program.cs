@@ -2,6 +2,7 @@
 using AlgorithmsAndDataStructures.src.hashtable;
 using AlgorithmsAndDataStructures.src.util;
 using AlgorithmsAndDataStructures.src.sorting.quicksort;
+using AlgorithmsAndDataStructures.src.recursion;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
@@ -38,7 +39,8 @@ namespace AlgorithmsAndDataStructures
     {
         static void Main(string[] args)
         {
-            TestHashTableWithFinalFantasyAPI();
+            //TestHashTableWithFinalFantasyAPI();
+            Console.WriteLine(Recursive.Pow(4, 2));
         }
 
         static void TestQuickSort()
